@@ -13,6 +13,10 @@ This repository is divided into two decoupled services to maximize performance a
 1. **The Backend (Python/FastAPI):** Hosts the heavy PyTorch inference engine.
 2. **The Frontend (React/Vite):** A lightning-fast, beautifully designed "Midnight Glass" UI.
 
+**🔥 Live Demo:**
+* 🌐 **Frontend (Chat UI):** [https://axiom-sable-six.vercel.app/](https://axiom-sable-six.vercel.app/)
+* ⚙️ **Backend API:** `https://axiom-zov1.onrender.com/generate`
+
 ---
 
 ## 🏛️ Architecture & Solutions
