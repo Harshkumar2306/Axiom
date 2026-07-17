@@ -55,7 +55,7 @@ Axiom/
 
 This project is fully deployed and live on the internet!
 
-- **Frontend:** Hosted on **Vercel**.
+- **Frontend:** [https://axiom-sable-six.vercel.app/](https://axiom-sable-six.vercel.app/)
 - **Backend:** Hosted via **Docker on Render**.
 
 ### How to deploy your own instance:
