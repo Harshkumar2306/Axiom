@@ -29,7 +29,7 @@ function App() {
       const response = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: userPrompt, max_new_tokens: 200 })
+        body: JSON.stringify({ prompt: userPrompt })
       });
 
       const data = await response.json();
