@@ -2,6 +2,11 @@ import os
 import sys
 import torch
 
+# CRITICAL OPTIMIZATION for Render Free Tier (0.1 CPU):
+# PyTorch will try to spawn 16+ threads based on host cores, causing massive 
+# thread contention and freezing the server. Limit it to 1 thread for a 10x speedup.
+torch.set_num_threads(1)
+
 # Ensure the local llm_core directory is in the Python path
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "llm_core"))
 
