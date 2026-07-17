@@ -1,4 +1,4 @@
-import { Github, Settings } from 'lucide-react';
+import { Code, Settings } from 'lucide-react';
 
 export default function Header() {
   return (
@@ -19,7 +19,7 @@ export default function Header() {
           rel="noopener noreferrer"
           className="p-2 rounded-full hover:bg-[rgba(255,255,255,0.1)] transition-colors text-[var(--text-secondary)] hover:text-white"
         >
-          <Github size={20} />
+          <Code size={20} />
         </a>
       </div>
     </header>
