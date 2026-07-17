@@ -35,8 +35,19 @@ class LLMService:
         
         # Also check current directory just in case
         if not os.path.exists(ckpt_path):
-            ckpt_path = "best.pt"
-            
+            ckpt_path = os.path.join(os.path.dirname(__file__), '..', 'best.pt')
+        
+        # If best.pt does not exist, but we have parts, reconstruct it
+        if not os.path.exists(ckpt_path) and os.path.exists(ckpt_path + ".partaa"):
+            print("Reconstructing best.pt from split chunks...")
+            import glob
+            part_files = sorted(glob.glob(ckpt_path + ".part*"))
+            with open(ckpt_path, 'wb') as outfile:
+                for part in part_files:
+                    with open(part, 'rb') as infile:
+                        outfile.write(infile.read())
+            print(f"Successfully reconstructed best.pt ({os.path.getsize(ckpt_path)} bytes)")
+
         if os.path.exists(ckpt_path):
             checkpoint = torch.load(ckpt_path, map_location=self.device)
             self.model.load_state_dict(checkpoint['model_state'])
