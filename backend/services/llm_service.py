@@ -35,7 +35,7 @@ class LLMService:
         
         # Also check current directory just in case
         if not os.path.exists(ckpt_path):
-            ckpt_path = os.path.join(os.path.dirname(__file__), '..', 'best.pt')
+            ckpt_path = os.path.join(os.path.dirname(__file__), '..', '..', 'best.pt')
         
         # If best.pt does not exist, but we have parts, reconstruct it
         if not os.path.exists(ckpt_path) and os.path.exists(ckpt_path + ".partaa"):
