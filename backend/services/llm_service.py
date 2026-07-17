@@ -18,13 +18,11 @@ class LLMService:
 
     def load_model(self):
         print("Loading tokenizer...")
-        # The exact 65 unique characters present in the TinyShakespeare dataset
-        chars = "\n !$&',-.3:;?ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-        self.tokenizer = Tokenizer(chars)
+        self.tokenizer = Tokenizer("gpt2")
         
         print("Loading model...")
         config = GPTConfig(
-            vocab_size=65,
+            vocab_size=50257,
             d_model=256,
             n_heads=8,
             n_layers=6,
