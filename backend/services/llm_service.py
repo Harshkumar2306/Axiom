@@ -39,7 +39,7 @@ class LLMService:
             
         if os.path.exists(ckpt_path):
             checkpoint = torch.load(ckpt_path, map_location=self.device)
-            self.model.load_state_dict(checkpoint['model_state_dict'])
+            self.model.load_state_dict(checkpoint['model_state'])
             print(f"Model loaded successfully from {ckpt_path}!")
         else:
             print(f"Warning: {ckpt_path} not found. Using untrained random weights for testing.")
