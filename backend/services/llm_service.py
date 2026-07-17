@@ -26,7 +26,7 @@ class LLMService:
             d_model=256,
             n_heads=8,
             n_layers=6,
-            context_length=1024
+            context_length=256
         )
         self.model = GPT(config)
         
