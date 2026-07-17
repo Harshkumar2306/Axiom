@@ -17,6 +17,32 @@ This repository is divided into two decoupled services to maximize performance a
 
 ## 🏛️ Architecture & Solutions
 
+```mermaid
+graph TB
+    subgraph Frontend["Frontend (Vercel)"]
+        UI["Midnight Glass UI (React/Vite)"]
+        UI --> |"HTTP POST /generate"| API
+    end
+
+    subgraph Backend["Backend (Render - Docker)"]
+        START["Startup Script"] --> |"Reassembles Chunks"| MODEL_FILE[("best.pt (200MB)")]
+        
+        API["FastAPI Server"]
+        API --> |"Async Request"| TP["Starlette Threadpool"]
+        
+        subgraph TP["Background Threadpool"]
+            MODEL_FILE -.-> |"Loads Weights"| PT["PyTorch Engine"]
+            PT --> |"Generates Text (set_num_threads=1)"| OUTPUT["Shakespearean Response"]
+        end
+        
+        OUTPUT --> |"Returns JSON"| API
+    end
+
+    style Frontend fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f
+    style Backend fill:#d1fae5,stroke:#10b981,color:#064e3b
+    style TP fill:#ede9fe,stroke:#8b5cf6,color:#4c1d95
+```
+
 Deploying a custom PyTorch LLM to the cloud on free tiers presents massive physical limitations. We engineered three core solutions to successfully host this model:
 
 ### 1. The Chunking System (Bypassing 100MB Limits)
