@@ -1,25 +1,20 @@
-import { useState, useRef, useEffect } from 'react';
-import { Send, Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import Sidebar from './components/layout/Sidebar';
+import Header from './components/layout/Header';
+import ChatWindow from './components/chat/ChatWindow';
 import './index.css';
 
-// This URL will need to be replaced with the Hugging Face Space URL once deployed!
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/generate';
 
 function App() {
   const [messages, setMessages] = useState([
-    { role: 'bot', content: "Welcome! I am your custom LLM trained on Shakespeare.\n\nType a prompt below (e.g. 'ROMEO:') to see what I generate!" }
+    { 
+      role: 'bot', 
+      content: "Welcome to Axiom. I am your custom SwiGLU LLM trained entirely from scratch.\n\nType a prompt below (e.g. 'ROMEO:') to see what I generate!" 
+    }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const messagesEndRef = useRef(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
 
   const handleSend = async (e) => {
     e.preventDefault();
@@ -39,9 +34,7 @@ function App() {
 
       const data = await response.json();
       
-      if (data.error) {
-        throw new Error(data.error);
-      }
+      if (data.error) throw new Error(data.error);
 
       setMessages(prev => [...prev, { role: 'bot', content: data.response }]);
     } catch (error) {
@@ -55,51 +48,18 @@ function App() {
   };
 
   return (
-    <div className="app-container">
-      <header>
-        <h1><Sparkles size={32} style={{ display: 'inline', marginRight: '10px', verticalAlign: 'bottom' }}/> SwiGLU LLM</h1>
-        <div className="subtitle">17M Parameters • Custom Architecture</div>
-      </header>
-
-      <div className="chat-container">
-        <div className="messages">
-          {messages.map((msg, idx) => (
-            <div key={idx} className={`message ${msg.role}`}>
-              <div className="message-label">{msg.role === 'user' ? 'You' : 'Model'}</div>
-              <div className="message-content">
-                {msg.content}
-              </div>
-            </div>
-          ))}
-          {isLoading && (
-            <div className="message bot">
-              <div className="message-label">Model</div>
-              <div className="message-content">
-                <div className="loading-dots">
-                  <div className="dot"></div>
-                  <div className="dot"></div>
-                  <div className="dot"></div>
-                </div>
-              </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
-
-        <form onSubmit={handleSend} className="input-area">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Type a Shakespearean prompt..."
-            disabled={isLoading}
-            autoComplete="off"
-          />
-          <button type="submit" disabled={!input.trim() || isLoading}>
-            <Send size={18} />
-          </button>
-        </form>
-      </div>
+    <div className="app-layout">
+      <Sidebar />
+      <main className="main-content">
+        <Header />
+        <ChatWindow 
+          messages={messages}
+          input={input}
+          setInput={setInput}
+          handleSend={handleSend}
+          isLoading={isLoading}
+        />
+      </main>
     </div>
   );
 }

@@ -1,0 +1,65 @@
+import os
+import sys
+import torch
+
+# Ensure the local llm_core directory is in the Python path
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "llm_core"))
+
+from config.gpt_config import GPTConfig
+from core.model import GPT
+from data.tokenizer import Tokenizer
+
+class LLMService:
+    def __init__(self):
+        self.model = None
+        self.tokenizer = None
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.load_model()
+
+    def load_model(self):
+        print("Loading tokenizer...")
+        # The exact 65 unique characters present in the TinyShakespeare dataset
+        chars = "\n !$&',-.3:;?ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+        self.tokenizer = Tokenizer(chars)
+        
+        print("Loading model...")
+        config = GPTConfig(
+            vocab_size=65,
+            d_model=256,
+            n_heads=8,
+            n_layers=6,
+            context_length=1024
+        )
+        self.model = GPT(config)
+        
+        # Look for best.pt in the root of the project (parent of backend)
+        ckpt_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "best.pt")
+        
+        # Also check current directory just in case
+        if not os.path.exists(ckpt_path):
+            ckpt_path = "best.pt"
+            
+        if os.path.exists(ckpt_path):
+            checkpoint = torch.load(ckpt_path, map_location=self.device)
+            self.model.load_state_dict(checkpoint['model_state_dict'])
+            print(f"Model loaded successfully from {ckpt_path}!")
+        else:
+            print(f"Warning: {ckpt_path} not found. Using untrained random weights for testing.")
+            
+        self.model.to(self.device)
+        self.model.eval()
+
+    def generate(self, prompt: str, max_new_tokens: int = 200) -> str:
+        if not self.model or not self.tokenizer:
+            raise RuntimeError("Model not loaded properly")
+            
+        encoded = self.tokenizer.encode(prompt)
+        x = torch.tensor(encoded, dtype=torch.long, device=self.device).unsqueeze(0)
+        
+        with torch.no_grad():
+            y = self.model.generate(x, max_new_tokens=max_new_tokens)
+            
+        return self.tokenizer.decode(y[0].tolist())
+
+# Singleton instance
+llm_service = LLMService()
